@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.0</version>
+		<version>3.4.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com</groupId>
@@ -28,12 +28,117 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+		 <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
+        <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
+        <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
+        <spring-boot.version>3.4.2</spring-boot.version>
+        <junit-jupiter.version>5.11.0-M2</junit-jupiter.version>
+        <native-build-tools-plugin.version>0.9.17</native-build-tools-plugin.version>
+		<spring-ai.version>1.0.0-M6</spring-ai.version>
 	</properties>
+	<repositories>
+        <repository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot
+            </url> <!-- We need this for experimental dependencies not available on Maven Central -->
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <dependencyManagement>
+        <dependencies>
+        	<dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+	
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-mistral-ai-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-redis-store-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-transformers-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+           <groupId>org.springframework.ai</groupId>
+           <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
+       </dependency>
+       <dependency>
+           <groupId>org.springframework.ai</groupId>
+           <artifactId>spring-ai-mcp-client-spring-boot-starter</artifactId>
+       </dependency>
+       <dependency>
+           <groupId>org.springframework.ai</groupId>
+           <artifactId>spring-ai-anthropic-spring-boot-starter</artifactId>
+       </dependency>
+       <dependency>
+           <groupId>org.springframework.ai</groupId>
+           <artifactId>spring-ai-mcp-server-webmvc-spring-boot-starter</artifactId>
+       </dependency>
+       <dependency>
+           <groupId>org.springframework.ai</groupId>
+           <artifactId>spring-ai-pgvector-store-spring-boot-starter</artifactId>
+       </dependency>
+       <dependency>
+           <groupId>org.springframework.boot</groupId>
+           <artifactId>spring-boot-docker-compose</artifactId>
+       </dependency>
+       <dependency>
+           <groupId>org.springframework.ai</groupId>
+           <artifactId>spring-ai-bedrock-converse-spring-boot-starter</artifactId>
+       </dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -43,12 +148,108 @@
 	</dependencies>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
+		<pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${maven-clean-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven-jar-plugin.version}</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <mainClass>${start-class}</mainClass>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.graalvm.buildtools</groupId>
+                    <artifactId>native-maven-plugin</artifactId>
+                    <version>${native-build-tools-plugin.version}</version>
+                    <extensions>true</extensions>
+                </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                    <configuration>
+                        <mainClass>${start-class}</mainClass>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.springai.SpringAIApplication</mainClass>
+                    <layout>JAR</layout>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                    <excludes>
+                        <exclude>**/*ManualTest.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+        
 	</build>
 
+	<profiles>
+        <profile>
+            <id>deepseek</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.boot.mainclass>com.springai.deepseek.Application</spring.boot.mainclass>
+            </properties>
+        </profile>
+        <profile>
+            <id>mcp-server</id>
+            <properties>
+                <spring.boot.mainclass>com.springai.mcp.server.ServerApplication</spring.boot.mainclass>
+            </properties>
+        </profile>
+        <profile>
+            <id>mcp-client</id>
+            <properties>
+                <spring.boot.mainclass>com.springai.mcp.client.ClientApplication</spring.boot.mainclass>
+            </properties>
+        </profile>
+        <profile>
+            <id>pgvector</id>
+            <properties>
+                <spring.boot.mainclass>com.springai.semanticsearch.Application</spring.boot.mainclass>
+            </properties>
+        </profile>
+    </profiles>
 </project>
